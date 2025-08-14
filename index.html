@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Team Line‑Up Reveal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    :root{
+      --bg: #0a0f1f;
+      --card: #141a2a;
+      --text: #ffffff;
+      --muted: #9ca3af;
+      --accent: #f43f5e;
+      --accent2: #3b82f6;
+    }
+    *{box-sizing:border-box; margin:0; padding:0}
+    body{
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0%, var(--bg) 100%);
+      color: var(--text);
+      display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:20px;
+    }
+    .container{
+      width: min(900px, 100%);
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    h1{
+      font-weight:700; font-size: 2rem; margin-bottom: 4px; text-align:center;
+    }
+    p{
+      color: var(--muted); text-align:center; margin-bottom:20px;
+    }
+    .controls{
+      display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:20px;
+    }
+    button{
+      padding: 10px 16px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor:pointer;
+      transition: all .2s ease;
+    }
+    .primary{ background: var(--accent); color:#fff; }
+    .secondary{ background: var(--accent2); color:#fff; }
+    .ghost{ background: transparent; border: 1px solid var(--muted); color: var(--muted); }
+    button:hover{ transform: scale(1.05); }
+    .list{
+      display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:14px;
+    }
+    .player{
+      background: linear-gradient(145deg, #1f2937, #111827);
+      padding: 14px;
+      border-radius: 14px;
+      display:flex; align-items:center; gap:12px;
+      opacity:0; transform: translateY(10px);
+      animation: show .4s ease forwards;
+    }
+    .badge{
+      background: var(--accent2);
+      width: 34px; height:34px;
+      border-radius: 8px;
+      display:grid; place-items:center;
+      font-weight:700;
+      color:#fff;
+    }
+    .name{
+      font-weight:600;
+    }
+    @keyframes show{
+      to { opacity:1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Team Line‑Up</h1>
+    <p>Click buttons to reveal your players in style</p>
+    <div class="controls">
+      <button class="primary" id="showAllBtn">Show All</button>
+      <button class="secondary" id="showNextBtn">Show Next</button>
+      <button class="ghost" id="shuffleBtn">Shuffle</button>
+      <button class="ghost" id="resetBtn">Reset</button>
+    </div>
+    <div id="list" class="list"></div>
+  </div>
+  <script>
+    let players = [
+      "Ajad yadav", "Ankit singh", "Ajay", "Ravi",
+      "Ankit raj gupta", "Rahul", "Mayank", "Raj",
+      "Aditya", "Nihal", "Chotu"
+    ];
+
+    const list = document.getElementById('list');
+    const showAllBtn = document.getElementById('showAllBtn');
+    const showNextBtn = document.getElementById('showNextBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    let revealedCount = 0;
+
+    function createPlayer(name, index){
+      const div = document.createElement('div');
+      div.className = 'player';
+      div.style.animationDelay = `${index * 100}ms`;
+
+      const badge = document.createElement('div');
+      badge.className = 'badge';
+      badge.textContent = index+1;
+
+      const pname = document.createElement('div');
+      pname.className = 'name';
+      pname.textContent = name;
+
+      div.appendChild(badge);
+      div.appendChild(pname);
+      return div;
+    }
+
+    function clearList(){ list.innerHTML=''; revealedCount=0; }
+
+    function showAll(){
+      clearList();
+      players.forEach((p,i)=>{
+        list.appendChild(createPlayer(p,i));
+      });
+      revealedCount = players.length;
+    }
+
+    function showNext(){
+      if(revealedCount < players.length){
+        list.appendChild(createPlayer(players[revealedCount], revealedCount));
+        revealedCount++;
+      }
+    }
+
+    function shuffle(){
+      for(let i=players.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [players[i], players[j]] = [players[j], players[i]];
+      }
+      if(revealedCount>0) showAll();
+    }
+
+    showAllBtn.addEventListener('click', showAll);
+    showNextBtn.addEventListener('click', showNext);
+    shuffleBtn.addEventListener('click', shuffle);
+    resetBtn.addEventListener('click', clearList);
+  </script>
+</body>
+</html>
